@@ -140,6 +140,8 @@
     max-width: 460px;
     height: 340px;
     margin: 0 auto 18px;
+    touch-action: pan-y;
+    transition: transform 0.2s ease, opacity 0.2s ease;
   }
 
   .flip-card-inner {
@@ -531,7 +533,7 @@
       <div class="flip-card-inner" id="flipCardInner">
         <div class="flip-card-front">
           <div class="word" id="flashWord">WORD</div>
-          <div class="hint">Tap the card to flip</div>
+          <div class="hint">Tap to flip &bull; Swipe for next/previous</div>
         </div>
         <div class="flip-card-back">
           <div class="def-label">English Definition</div>
@@ -540,7 +542,7 @@
           <p id="flashSentence">sentence</p>
           <div class="def-label sent-label-es">Spanish Sentence</div>
           <p id="flashSentenceEs">oración</p>
-          <div class="hint">Tap to flip back</div>
+          <div class="hint">Tap to flip back &bull; Swipe for next/previous</div>
         </div>
       </div>
     </div>
@@ -786,6 +788,10 @@
 
   function initFlashcards() {
     flashIndex = 0;
+    var card = byId("flipCard");
+    card.style.transition = "";
+    card.style.transform = "";
+    card.style.opacity = "";
     renderFlashcard();
   }
 
@@ -799,18 +805,48 @@
     byId("flashProgress").textContent = "Card " + (flashIndex + 1) + " of " + WORDS.length;
   }
 
-  byId("flipCardInner").addEventListener("click", function () {
-    byId("flipCard").classList.toggle("flipped");
+  function goToCard(direction) {
+    var card = byId("flipCard");
+    card.style.transform = "translateX(" + (direction * -36) + "px)";
+    card.style.opacity = "0";
+    setTimeout(function () {
+      flashIndex = (flashIndex + direction + WORDS.length) % WORDS.length;
+      renderFlashcard();
+      card.style.transition = "none";
+      card.style.transform = "translateX(" + (direction * 36) + "px)";
+      void card.offsetWidth; // force reflow so the next transition runs
+      card.style.transition = "transform 0.2s ease, opacity 0.2s ease";
+      card.style.transform = "translateX(0)";
+      card.style.opacity = "1";
+    }, 180);
+  }
+
+  byId("flashNext").addEventListener("click", function () { goToCard(1); });
+  byId("flashPrev").addEventListener("click", function () { goToCard(-1); });
+
+  // Tap to flip, swipe left/right to move to the next/previous card.
+  var SWIPE_THRESHOLD = 40;
+  var swipeStart = null;
+
+  byId("flipCard").addEventListener("pointerdown", function (e) {
+    swipeStart = { x: e.clientX, y: e.clientY };
   });
 
-  byId("flashNext").addEventListener("click", function () {
-    flashIndex = (flashIndex + 1) % WORDS.length;
-    renderFlashcard();
+  byId("flipCard").addEventListener("pointerup", function (e) {
+    if (!swipeStart) return;
+    var dx = e.clientX - swipeStart.x;
+    var dy = e.clientY - swipeStart.y;
+    swipeStart = null;
+
+    if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
+      goToCard(dx < 0 ? 1 : -1);
+    } else {
+      byId("flipCard").classList.toggle("flipped");
+    }
   });
 
-  byId("flashPrev").addEventListener("click", function () {
-    flashIndex = (flashIndex - 1 + WORDS.length) % WORDS.length;
-    renderFlashcard();
+  byId("flipCard").addEventListener("pointercancel", function () {
+    swipeStart = null;
   });
 
   // =================================================================
@@ -1217,7 +1253,7 @@
   // =================================================================
   var searchState = null;
   var SEARCH_SIZE = 10;
-  var SEARCH_TIME = 20;
+  var SEARCH_TIME = 120;
 
   function initSearch() {
     var built = buildSearchGrid();
