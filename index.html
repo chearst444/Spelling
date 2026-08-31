@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>3rd Grade Spelling Adventure</title>
+<title>3rd Grade Spanish Spelling Adventure</title>
 <style>
   :root {
     --deep-purple: #5A276B;
@@ -138,7 +138,7 @@
     perspective: 1200px;
     width: 100%;
     max-width: 460px;
-    height: 260px;
+    height: 340px;
     margin: 0 auto 18px;
   }
 
@@ -190,17 +190,37 @@
     background: var(--deep-purple);
     color: #fff;
     transform: rotateY(180deg);
+    justify-content: flex-start;
+    overflow-y: auto;
+    padding: 18px 20px 12px;
   }
 
   .flip-card-back .def-label {
     color: var(--bright-yellow);
     font-weight: bold;
-    margin-bottom: 4px;
+    margin: 6px 0 2px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .flip-card-back .def-label.sent-label {
+    color: var(--electric-blue);
+  }
+
+  .flip-card-back .def-label.sent-label-es {
+    color: var(--vivid-orange);
   }
 
   .flip-card-back p {
-    margin: 4px 0 10px;
-    font-size: 1rem;
+    margin: 0 0 4px;
+    font-size: 0.92rem;
+    line-height: 1.3;
+  }
+
+  .flip-card-back .hint {
+    margin-top: auto;
+    padding-top: 8px;
   }
 
   /* ---------- Matching ---------- */
@@ -486,8 +506,8 @@
 <body>
 
 <header class="app-header">
-  <h1>3rd Grade Spelling Adventure</h1>
-  <p>September, Week 1 vocabulary practice</p>
+  <h1>3rd Grade Spanish Spelling Adventure</h1>
+  <p>September, Week 1 bilingual vocabulary practice</p>
 </header>
 
 <nav class="mode-nav" id="modeNav">
@@ -511,10 +531,12 @@
           <div class="hint">Tap the card to flip</div>
         </div>
         <div class="flip-card-back">
-          <div class="def-label">Definition</div>
+          <div class="def-label">English Definition</div>
           <p id="flashDef">definition</p>
-          <div class="def-label">Sentence</div>
+          <div class="def-label sent-label">English Sentence</div>
           <p id="flashSentence">sentence</p>
+          <div class="def-label sent-label-es">Spanish Sentence</div>
+          <p id="flashSentenceEs">oración</p>
           <div class="hint">Tap to flip back</div>
         </div>
       </div>
@@ -582,7 +604,7 @@
 
 </main>
 
-<footer>Practice makes perfect spellers.</footer>
+<footer>&iexcl;La pr&aacute;ctica hace al maestro! Practice makes perfect bilingual spellers.</footer>
 
 <script>
 (function () {
@@ -592,17 +614,122 @@
   // Data
   // ---------------------------------------------------------------
   var WORDS = [
-    { word: "accident", def: "An unexpected event that happens by chance, often causing harm.", sentence: "The car accident happened on a rainy afternoon." },
-    { word: "actual", def: "Existing in fact; real.", sentence: "Tell me what actually happened at recess." },
-    { word: "admiral", def: "A high ranking officer in the navy.", sentence: "The admiral commanded the entire fleet of ships." },
-    { word: "adventure", def: "An exciting or unusual experience.", sentence: "Our trip to the mountains was a great adventure." },
-    { word: "afraid", def: "Feeling fear or worry.", sentence: "She was afraid of the loud thunderstorm." },
-    { word: "airplane", def: "A vehicle that flies through the air using wings and engines.", sentence: "We watched the airplane take off from the runway." },
-    { word: "alphabet", def: "The set of letters used to write a language.", sentence: "There are twenty six letters in the English alphabet." },
-    { word: "always", def: "At all times; every single time.", sentence: "She always brushes her teeth before bed." },
-    { word: "amount", def: "A quantity of something.", sentence: "We need a large amount of paper for the project." },
-    { word: "ancient", def: "Very old; from a long time ago.", sentence: "The museum has ancient pottery from Egypt." }
+    { es: "accidente", def: "An unexpected event that causes damage or injury.", enSentence: "He slipped on the ice and had a minor accident.", esSentence: "Se resbaló en el hielo y tuvo un accidente menor." },
+    { es: "actual", def: "Existing in fact or reality.", enSentence: "The actual cost was higher than the estimate.", esSentence: "El costo real fue mayor que el presupuesto." },
+    { es: "almirante", def: "A high-ranking commander in the navy.", enSentence: "The admiral gave the order to set sail.", esSentence: "El almirante dio la orden de zarpar." },
+    { es: "aventura", def: "An exciting or unusual experience.", enSentence: "Going on the camping trip was a grand adventure.", esSentence: "Ir de campamento fue una gran aventura." },
+    { es: "asustado", def: "Feeling fear or apprehension.", enSentence: "She was afraid of the dark room.", esSentence: "Ella tenía miedo del cuarto oscuro." },
+    { es: "avión", def: "A powered flying vehicle with fixed wings.", enSentence: "The airplane soared high above the clouds.", esSentence: "El avión se elevó alto por encima de las nubes." },
+    { es: "alfabeto", def: "A set of letters in a fixed order.", enSentence: "Young children learn the alphabet song in preschool.", esSentence: "Los niños pequeños aprenden la canción del alfabeto en preescolar." },
+    { es: "siempre", def: "At all times or on every occasion.", enSentence: "He always brushes his teeth before bed.", esSentence: "Él siempre se cepilla los dientes antes de dormir." },
+    { es: "cantidad", def: "A quantity of something.", enSentence: "A large amount of snow fell overnight.", esSentence: "Una gran cantidad de nieve cayó durante la noche." },
+    { es: "antiguo", def: "Belonging to the very distant past.", enSentence: "They explored the ruins of an ancient castle.", esSentence: "Exploraron las ruinas de un castillo antiguo." },
+    { es: "animal", def: "A living organism that feeds on organic matter.", enSentence: "The tiger is a powerful wild animal.", esSentence: "El tigre es un animal salvaje y poderoso." },
+    { es: "otro", def: "One more in addition to the existing one.", enSentence: "Would you like another slice of pie?", esSentence: "¿Te gustaría otra rebanada de pastel?" },
+    { es: "respuesta", def: "A reply to a question.", enSentence: "She raised her hand to give the correct answer.", esSentence: "Ella levantó la mano para dar la respuesta correcta." },
+    { es: "ansioso", def: "Experiencing worry, unease, or nervousness.", enSentence: "He felt anxious before taking the big test.", esSentence: "Él se sentía ansioso antes de tomar el gran examen." },
+    { es: "alguien", def: "Any person at all.", enSentence: "Does anyone know the way to the library?", esSentence: "¿Alguien sabe el camino a la biblioteca?" },
+    { es: "algo", def: "Used to refer to a thing, no matter what.", enSentence: "You can ask me anything you want.", esSentence: "Puedes preguntarme cualquier cosa que quieras." },
+    { es: "de todos modos", def: "Used to indicate that a statement is true despite other factors.", enSentence: "It was raining, but we went outside anyway.", esSentence: "Estaba lloviendo, pero salimos de todos modos." },
+    { es: "aparecer", def: "Come into sight or become visible.", enSentence: "A rainbow began to appear in the sky.", esSentence: "Un arcoíris comenzó a aparecer en el cielo." },
+    { es: "electrodoméstico", def: "A device or machine designed for a specific task.", enSentence: "The refrigerator is a major kitchen appliance.", esSentence: "El refrigerador es un electrodoméstico principal de la cocina." },
+    { es: "abril", def: "The fourth month of the year.", enSentence: "Spring flowers start blooming in April.", esSentence: "Las flores de primavera comienzan a florecer en abril." },
+    { es: "ártico", def: "Relating to the regions around the North Pole.", enSentence: "Polar bears are built to survive the freezing arctic.", esSentence: "Los osos polares están preparados para sobrevivir en el ártico congelado." },
+    { es: "alrededor", def: "Located on every side or in a circle.", enSentence: "They gathered around the campfire to stay warm.", esSentence: "Se reunieron alrededor de la fogata para mantenerse calientes." },
+    { es: "organizar", def: "Put things in a neat, attractive, or required order.", enSentence: "She helped arrange the books on the shelf.", esSentence: "Ella ayudó a organizar los libros en el estante." },
+    { es: "llegar", def: "Reach a destination.", enSentence: "The train is scheduled to arrive at noon.", esSentence: "El tren está programado para llegar al mediodía." },
+    { es: "artículo", def: "A piece of writing included in a publication.", enSentence: "He wrote a fascinating article about space.", esSentence: "Él escribió un artículo fascinante sobre el espacio." },
+    { es: "artista", def: "A person who creates paintings, drawings, or sculptures.", enSentence: "The artist mixed blue and yellow paint on her palette.", esSentence: "La artista mezcló pintura azul y amarilla en su paleta." },
+    { es: "preguntando", def: "Saying something in order to obtain information.", enSentence: "He was asking a lot of questions about how cars work.", esSentence: "Él estaba haciendo muchas preguntas sobre cómo funcionan los autos." },
+    { es: "dormido", def: "In a state of sleep.", enSentence: "The puppy was fast asleep on the rug.", esSentence: "El cachorro estaba profundamente dormido sobre la alfombra." },
+    { es: "asombrar", def: "Surprise or impress greatly.", enSentence: "The magician plans to astonish the audience with his tricks.", esSentence: "El mago planea asombrar al público con sus trucos." },
+    { es: "atleta", def: "A person who is proficient in sports and physical exercises.", enSentence: "The runner trained hard to become an Olympic athlete.", esSentence: "El corredor entrenó duro para convertirse en un atleta olímpico." },
+    { es: "ataque", def: "Take aggressive action against someone or something.", enSentence: "The knight defended the castle from the enemy attack.", esSentence: "El caballero defendió el castillo del ataque enemigo." },
+    { es: "atención", def: "Notice taken of someone or something.", enSentence: "The loud noise caught everyone's attention.", esSentence: "El fuerte ruido llamó la atención de todos." },
+    { es: "agosto", def: "The eighth month of the year.", enSentence: "The weather is usually very hot in August.", esSentence: "El clima suele ser muy caluroso en agosto." },
+    { es: "autor", def: "A writer of a book, article, or report.", enSentence: "My favorite author just released a new mystery novel.", esSentence: "Mi autor favorito acaba de lanzar una nueva novela de misterio." },
+    { es: "otoño", def: "The season between summer and winter.", enSentence: "Leaves turn red and gold during autumn.", esSentence: "Las hojas se vuelven rojas y doradas durante el otoño." },
+    { es: "avenida", def: "A broad road or street.", enSentence: "Their house is located on a quiet tree-lined avenue.", esSentence: "Su casa está ubicada en una tranquila avenida rodeada de árboles." },
+    { es: "despierto", def: "Not sleeping.", enSentence: "He was wide awake long before sunrise.", esSentence: "Él estaba muy despierto mucho antes del amanecer." },
+    { es: "incómodo", def: "Causing difficulty or embarrassment; clumsy.", enSentence: "Carrying the large, slippery box felt very awkward.", esSentence: "Llevar la caja grande y resbaladiza se sintió muy incómodo." },
+    { es: "equipaje", def: "Personal belongings packed for traveling.", enSentence: "They checked their heavy baggage at the airport counter.", esSentence: "Registraron su pesado equipaje en el mostrador del aeropuerto." },
+    { es: "equilibrio", def: "An even distribution of weight enabling someone or something to remain upright.", enSentence: "The tightrope walker kept her balance high above the ground.", esSentence: "El equilibrista mantuvo su equilibrio muy por encima del suelo." },
+    { es: "bambú", def: "A giant woody grass with hollow stems.", enSentence: "Pandas spend most of their day eating bamboo.", esSentence: "Los pandas pasan la mayor parte del día comiendo bambú." },
+    { es: "venda", def: "A strip of material used to bind a wound.", enSentence: "The nurse put a clean bandage on his scraped knee.", esSentence: "La enfermera le puso una venda limpia en su rodilla raspada." },
+    { es: "banquete", def: "A large formal meal for a large number of people.", enSentence: "The king hosted a grand banquet for his guests.", esSentence: "El rey ofreció un gran banquete para sus invitados." },
+    { es: "ganga", def: "A thing bought for much less than its normal price.", enSentence: "She found a great bargain on winter boots.", esSentence: "Ella encontró una gran ganga en botas de invierno." },
+    { es: "barril", def: "A cylindrical container made of wood or metal with flat ends.", enSentence: "The old wooden barrel was filled with rainwater.", esSentence: "El viejo barril de madera estaba lleno de agua de lluvia." },
+    { es: "sótano", def: "The floor of a building partly or entirely below ground level.", enSentence: "They store old holiday decorations in the basement.", esSentence: "Guardan las viejas decoraciones navideñas en el sótano." },
+    { es: "cesta", def: "A container made of woven material.", enSentence: "She carried a basket full of fresh apples.", esSentence: "Ella llevaba una cesta llena de manzanas frescas." },
+    { es: "masa", def: "A semi-liquid mixture containing flour, milk, and eggs.", enSentence: "She poured the pancake batter onto the hot griddle.", esSentence: "Ella vertió la masa de panqueques en la plancha caliente." },
+    { es: "faro", def: "A fire or light set up on a high or prominent position as a warning or signal.", enSentence: "The lighthouse served as a beacon for ships at sea.", esSentence: "El faro sirvió como señal para los barcos en el mar." },
+    { es: "gorro", def: "A small, close-fitting brimless hat.", enSentence: "He pulled his wool beanie down over his ears.", esSentence: "Se bajó el gorro de lana sobre las orejas." },
+    { es: "belleza", def: "A combination of qualities that pleases the intellect or moral sense.", enSentence: "They stopped to admire the natural beauty of the canyon.", esSentence: "Se detuvieron a admirar la belleza natural del cañón." },
+    { es: "convertirse", def: "Begin to be.", enSentence: "The caterpillar will eventually become a butterfly.", esSentence: "La oruga eventualmente se convertirá en mariposa." },
+    { es: "colcha", def: "A decorative cloth cover placed over a bed.", enSentence: "She smoothed a colorful quilt-style bedspread over the mattress.", esSentence: "Ella alisó una colorida colcha sobre el colchón." },
+    { es: "antes", def: "Earlier than the time mentioned.", enSentence: "Wash your hands before eating dinner.", esSentence: "Lávate las manos antes de cenar." },
+    { es: "empezar", def: "Start.", enSentence: "The movie is about to begin in a minute.", esSentence: "La película está a punto de empezar en un minuto." },
+    { es: "comportamiento", def: "The way in which one acts or conducts oneself.", enSentence: "The teacher praised the students for their good behavior.", esSentence: "El maestro elogió a los estudiantes por su buen comportamiento." },
+    { es: "detrás", def: "At or to the back of.", enSentence: "He hid behind the large oak tree.", esSentence: "Él se escondió detrás del gran roble." },
+    { es: "creer", def: "Accept as true or real.", enSentence: "Do you believe in magic?", esSentence: "¿Crees en la magia?" },
+    { es: "pertenecer", def: "Be the property of someone.", enSentence: "This red backpack belongs to my sister.", esSentence: "Esta mochila roja pertenece a mi hermana." },
+    { es: "abajo", def: "At a lower level or layer.", enSentence: "The valley stretched out far below the mountain peak.", esSentence: "El valle se extendía muy abajo del pico de la montaña." },
+    { es: "debajo", def: "Extending to a lower position than; under.", enSentence: "He found the lost key hidden beneath the rug.", esSentence: "Encontró la llave perdida escondida debajo de la alfombra." },
+    { es: "bayas", def: "A small, pulpy, and often edible fruit.", enSentence: "They picked sweet wild blueberries in the woods.", esSentence: "Recogieron bayas de arándanos silvestres dulces en el bosque." },
+    { es: "además", def: "In addition to; apart from.", enSentence: "Besides math, she also loves science class.", esSentence: "Además de matemáticas, a ella también le encanta la clase de ciencias." },
+    { es: "manta", def: "A large piece of warm cloth used for sleeping or keeping warm.", enSentence: "He wrapped a cozy wool blanket around his shoulders.", esSentence: "Se envolvió los hombros con una manta de lana acogedora." },
+    { es: "más allá", def: "On the further side of.", enSentence: "The rolling hills stretched far beyond the horizon.", esSentence: "Las colinas onduladas se extendían más allá del horizonte." },
+    { es: "bicicleta", def: "A vehicle with two wheels powered by pedals.", enSentence: "He rode his bicycle down the paved driveway.", esSentence: "Él montó su bicicleta por el camino pavimentado." },
+    { es: "más grande", def: "Larger in size or extent.", enSentence: "An elephant is much bigger than a horse.", esSentence: "Un elefante es mucho más grande que un caballo." },
+    { es: "billón", def: "The number equivalent to one thousand million.", enSentence: "The universe contains billions of distant stars.", esSentence: "El universo contiene billones de estrellas distantes." },
+    { es: "biología", def: "The study of living organisms.", enSentence: "They learned about plant cells in biology class.", esSentence: "Aprendieron sobre las células vegetales en la clase de biología." },
+    { es: "galleta", def: "A small, baked flour-based leavened bread product.", enSentence: "She spread warm butter over a freshly baked biscuit.", esSentence: "Ella untó mantequilla tibia sobre una galleta recién horneada." },
+    { es: "flor", def: "A flower or a mass of flowers on a tree or bush.", enSentence: "The cherry tree burst into pink blossom in the spring.", esSentence: "El cerezo estalló en una flor rosada en la primavera." },
+    { es: "tabla", def: "A long, thin, flat piece of wood or other hard material.", enSentence: "He used a saw to cut the wooden board.", esSentence: "Él usó una sierra para cortar la tabla de madera." },
+    { es: "caldertera", def: "A fuel-burning apparatus used for heating water.", enSentence: "The basement boiler keeps the whole house warm in winter.", esSentence: "La caldera del sótano mantiene toda la casa caliente en invierno." },
+    { es: "bonanza", def: "A situation that creates a sudden increase in wealth or good fortune.", enSentence: "The garage sale turned out to be a pricing bonanza for collectors.", esSentence: "La venta de garaje resultó ser una bonanza de precios para los coleccionistas." },
+    { es: "frontera", def: "A line separating two countries, political divisions, or other areas.", enSentence: "They crossed the border into Canada.", esSentence: "Cruzaron la frontera hacia Canadá." },
+    { es: "pedir prestado", def: "Take and use something with the intention of returning it.", enSentence: "May I borrow your red marker for a minute?", esSentence: "¿Puedo pedir prestado tu marcador rojo por un minuto?" },
+    { es: "botella", def: "A glass or plastic container with a narrow neck, used for storing liquids.", enSentence: "He filled his reusable water bottle at the fountain.", esSentence: "Llenó su botella de agua reutilizable en la fuente." },
+    { es: "fondo", def: "The lowest point or part of something.", enSentence: "Coins sank straight to the bottom of the pool.", esSentence: "Las monedas se hundieron directamente hasta el fondo de la piscina." },
+    { es: "roca", def: "A large rock, typically one that has been worn smooth.", enSentence: "A massive boulder blocked the hiking trail.", esSentence: "Una roca masiva bloqueaba el sendero de excursión." },
+    { es: "rebotar", def: "Rebound off a surface.", enSentence: "The tennis ball began to bounce across the court.", esSentence: "La pelota de tenis comenzó a rebotar por la cancha." },
+    { es: "generoso", def: "Large in quantity; abundant.", enSentence: "The garden produced a bountiful harvest of tomatoes.", esSentence: "El jardín produjo una cosecha generosa de tomates." },
+    { es: "ramillete", def: "An attractively arranged bunch of flowers.", enSentence: "He handed his mother a bright bouquet of tulips.", esSentence: "Le entregó a su madre un ramillete brillante de tulipanes." },
+    { es: "tazón", def: "A round, deep dish used for food or liquid.", enSentence: "She ate a warm bowl of soup for lunch.", esSentence: "Ella comió un tazón tibio de sopa para el almuerzo." },
+    { es: "soporte", def: "A L-shaped support fixed to a wall to hold up a shelf.", enSentence: "He secured the metal bracket to the wall studs.", esSentence: "Fijó el soporte metálico a los montantes de la pared." },
+    { es: "rama", def: "A part of a tree that grows out from the trunk.", enSentence: "A little bluebird landed on the low oak branch.", esSentence: "Un pequeño azulejo se posó en la rama baja del roble." },
+    { es: "valiente", def: "Ready to face and endure danger or pain.", enSentence: "The firefighter was brave during the rescue.", esSentence: "El bombero fue valiente durante el rescate." },
+    { es: "brisa", def: "A gentle wind.", enSentence: "A cool afternoon breeze rippled through the grass.", esSentence: "Una brisa fresca de la tarde ondeaba a través de la hierba." },
+    { es: "breve", def: "Lasting for a short time.", enSentence: "They took a brief pause before continuing the hike.", esSentence: "Tomaron una pausa breve antes de continuar la caminata." },
+    { es: "brillante", def: "Giving out a lot of light; shining.", enSentence: "The sun was bright in the clear sky.", esSentence: "El sol estaba brillante en el cielo despejado." },
+    { es: "genial", def: "Very bright; exceptionally clever or talented.", enSentence: "She came up with a brilliant idea for the science project.", esSentence: "Se le ocurrió una idea genial para el proyecto de ciencias." },
+    { es: "traer", def: "Come to a place with someone or something.", enSentence: "Please bring your notebook to the meeting.", esSentence: "Por favor trae tu cuaderno a la reunión." },
+    { es: "frágil", def: "Hard but liable to break easily.", enSentence: "Dry autumn leaves are very brittle underfoot.", esSentence: "Las hojas secas de otoño son muy frágiles bajo los pies." },
+    { es: "ancho", def: "Having a distance from side to side; wide.", enSentence: "They crossed the broad river on a ferry.", esSentence: "Cruzaron el río ancho en un ferry." },
+    { es: "roto", def: "Fractured, damaged, or having been divided.", enSentence: "He taped together the pieces of the broken plate.", esSentence: "Pegó con cinta las piezas del plato roto." },
+    { es: "bronce", def: "A yellowish-brown alloy of copper with tin.", enSentence: "The winner of the third-place race received a bronze medal.", esSentence: "El ganador de la carrera del tercer lugar recibió una medalla de bronce." },
+    { es: "marrón", def: "Of a color produced by mixing red, yellow, and blue.", enSentence: "The cute puppy had soft brown fur.", esSentence: "El lindo cachorro tenía un suave pelaje marrón." },
+    { es: "burbuja", def: "A thin sphere of liquid enclosing air or gas.", enSentence: "The children blew giant soap bubbles in the yard.", esSentence: "Los niños soplaron burbujas gigantes de jabón en el patio." },
+    { es: "cubo", def: "A cylindrical vessel with a handle, used for carrying liquids.", enSentence: "He filled the red plastic bucket with soapy water.", esSentence: "Llenó el cubo de plástico rojo con agua jabonosa." },
+    { es: "hebilla", def: "A device used for fastening two ends of a belt or strap.", enSentence: "He snapped the seatbelt buckle into place.", esSentence: "Abrochó la hebilla del cinturón de seguridad en su lugar." },
+    { es: "presupuesto", def: "An estimate of income and expenditure for a set period.", enSentence: "They planned a tight monthly grocery budget.", esSentence: "Planearon un presupuesto mensual ajustado para el supermercado." },
+    { es: "búfalo", def: "A large, heavily built wild ox.", enSentence: "A herd of wild buffalo grazed across the plains.", esSentence: "Una manada de búfalos salvajes pastaba por las llanuras." },
+    { es: "constructor", def: "A person who constructs or repairs buildings.", enSentence: "The home builder laid out the foundation for the house.", esSentence: "El constructor de casas diseñó la fundación para la casa." },
+    { es: "paquete", def: "A collection of things tied together or wrapped up.", enSentence: "She carried a heavy bundle of firewood indoors.", esSentence: "Ella cargó un paquete pesado de leña hacia el interior." },
+    { es: "carga", def: "A load, typically a heavy one.", enSentence: "Carrying the heavy backpack felt like a burden.", esSentence: "Llevar la mochila pesada se sintió como una carga." },
+    { es: "oficina", def: "An office or department for transacting business, or a chest of drawers.", enSentence: "He placed his folded sweaters inside the wooden bureau.", esSentence: "Colocó sus suéteres doblados dentro de la oficina de madera." },
+    { es: "quemador", def: "The part of a stove or furnace that produces flame or heat.", enSentence: "She turned on the front stove burner to boil water.", esSentence: "Encendió el quemador delantero de la estufa para hervir agua." },
+    { es: "bushel", def: "A unit of capacity equal to eight gallons.", enSentence: "They harvested a whole bushel of crisp apples.", esSentence: "Cosecharon un bushel entero de manzanas crujientes." },
+    { es: "negocio", def: "A person's regular occupation, profession, or trade.", enSentence: "She opened a small local bakery business.", esSentence: "Abrió un pequeño negocio local de panadería." }
   ];
+  // Words with a single Spanish token (no spaces) - used by the mini-games
+  // that operate letter-by-letter: Spelling Drop, Missing Vowel Detective,
+  // and Speed Word Search.
+  var SIMPLE_WORDS = WORDS.filter(function (w) { return w.es.indexOf(" ") === -1; });
+
+  var SPANISH_ALPHABET = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
+  var VOWELS = "aeiouáéíóú";
 
   function shuffle(arr) {
     var a = arr.slice();
@@ -660,9 +787,10 @@
   function renderFlashcard() {
     var item = WORDS[flashIndex];
     byId("flipCard").classList.remove("flipped");
-    byId("flashWord").textContent = item.word.toUpperCase();
+    byId("flashWord").textContent = item.es.toUpperCase();
     byId("flashDef").textContent = item.def;
-    byId("flashSentence").textContent = item.sentence;
+    byId("flashSentence").textContent = item.enSentence;
+    byId("flashSentenceEs").textContent = item.esSentence;
     byId("flashProgress").textContent = "Card " + (flashIndex + 1) + " of " + WORDS.length;
   }
 
@@ -708,8 +836,8 @@
     matchState.words.forEach(function (item) {
       var b = document.createElement("button");
       b.className = "match-btn match-word";
-      b.textContent = item.word;
-      b.dataset.word = item.word;
+      b.textContent = item.es;
+      b.dataset.word = item.es;
       b.addEventListener("click", function () { onWordClick(item, b); });
       grid.appendChild(b);
     });
@@ -718,7 +846,7 @@
       var b = document.createElement("button");
       b.className = "match-btn match-def";
       b.textContent = item.def;
-      b.dataset.word = item.word;
+      b.dataset.word = item.es;
       b.addEventListener("click", function () { onDefClick(item, b); });
       grid.appendChild(b);
     });
@@ -748,7 +876,7 @@
     var wordEl = matchState.selectedWordEl;
     var wordItem = matchState.selectedWordItem;
 
-    if (wordItem.word === item.word) {
+    if (wordItem.es === item.es) {
       wordEl.classList.remove("selected");
       wordEl.classList.add("matched");
       el.classList.add("matched");
@@ -787,7 +915,7 @@
 
   function initDrop() {
     dropState = {
-      queue: shuffle(WORDS),
+      queue: shuffle(SIMPLE_WORDS),
       qIndex: 0,
       word: "",
       spelled: "",
@@ -827,10 +955,10 @@
 
   function loadDropWord() {
     if (dropState.qIndex >= dropState.queue.length) {
-      dropState.queue = shuffle(WORDS);
+      dropState.queue = shuffle(SIMPLE_WORDS);
       dropState.qIndex = 0;
     }
-    dropState.word = dropState.queue[dropState.qIndex].word.toUpperCase();
+    dropState.word = dropState.queue[dropState.qIndex].es.toUpperCase();
     dropState.spelled = "";
     renderDropProgress();
     spawnDropStep();
@@ -853,9 +981,8 @@
     var targetLetter = dropState.word[dropState.spelled.length];
     var letters = [{ ch: targetLetter, isTarget: true }];
 
-    var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     while (letters.length < 3) {
-      var decoy = alphabet[Math.floor(Math.random() * alphabet.length)];
+      var decoy = SPANISH_ALPHABET[Math.floor(Math.random() * SPANISH_ALPHABET.length)];
       if (decoy !== targetLetter) letters.push({ ch: decoy, isTarget: false });
     }
     letters = shuffle(letters);
@@ -924,7 +1051,7 @@
   }
 
   function dropWordComplete() {
-    var item = WORDS.filter(function (w) { return w.word.toUpperCase() === dropState.word; })[0];
+    var item = SIMPLE_WORDS.filter(function (w) { return w.es.toUpperCase() === dropState.word; })[0];
     dropState.score += 20;
     updateDropStats();
     showDropMessage("Great spelling! " + dropState.word + " means: " + item.def, "success");
@@ -955,11 +1082,10 @@
   // 4. Missing Letter Detective
   // =================================================================
   var blankState = null;
-  var VOWELS = "aeiou";
 
   function initBlank() {
     blankState = {
-      queue: shuffle(WORDS),
+      queue: shuffle(SIMPLE_WORDS),
       qIndex: 0,
       score: 0
     };
@@ -974,11 +1100,11 @@
 
   function loadBlankWord() {
     if (blankState.qIndex >= blankState.queue.length) {
-      blankState.queue = shuffle(WORDS);
+      blankState.queue = shuffle(SIMPLE_WORDS);
       blankState.qIndex = 0;
     }
     var item = blankState.queue[blankState.qIndex];
-    var word = item.word.toLowerCase();
+    var word = item.es.toLowerCase();
 
     var blankPositions = [];
     for (var i = 0; i < word.length; i++) {
@@ -1000,7 +1126,7 @@
     }
     blankState.bank = shuffle(correctLetters.concat(distractors));
 
-    byId("blankSentence").textContent = item.sentence + "  (" + item.def + ")";
+    byId("blankSentence").textContent = item.esSentence + "  (" + item.def + ")";
     renderBlankWord();
     renderBlankBank();
   }
@@ -1085,8 +1211,8 @@
   // 5. Speed Word Search
   // =================================================================
   var searchState = null;
-  var SEARCH_SIZE = 10;
-  var SEARCH_TIME = 20;
+  var SEARCH_SIZE = 12;
+  var SEARCH_TIME = 25;
 
   function initSearch() {
     var built = buildSearchGrid();
@@ -1128,12 +1254,12 @@
       grid.push(new Array(size).fill(null));
     }
 
-    var candidates = shuffle(WORDS).filter(function (w) { return w.word.length <= size; }).slice(0, 6);
+    var candidates = shuffle(SIMPLE_WORDS).filter(function (w) { return w.es.length <= size; }).slice(0, 6);
     var directions = [{ dr: 0, dc: 1 }, { dr: 1, dc: 0 }];
     var placements = [];
 
     candidates.forEach(function (item) {
-      var word = item.word.toUpperCase();
+      var word = item.es.toUpperCase();
       var placed = false;
       for (var attempt = 0; attempt < 60 && !placed; attempt++) {
         var dir = directions[Math.floor(Math.random() * directions.length)];
@@ -1160,11 +1286,10 @@
       }
     });
 
-    var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     for (var rr = 0; rr < size; rr++) {
       for (var cc = 0; cc < size; cc++) {
         if (grid[rr][cc] === null) {
-          grid[rr][cc] = alphabet[Math.floor(Math.random() * alphabet.length)];
+          grid[rr][cc] = SPANISH_ALPHABET[Math.floor(Math.random() * SPANISH_ALPHABET.length)];
         }
       }
     }
