@@ -460,25 +460,28 @@
 
   .search-grid {
     display: grid;
-    gap: 3px;
-    justify-content: center;
-    margin-bottom: 16px;
+    gap: 2px;
+    width: 100%;
+    max-width: 420px;
+    aspect-ratio: 1 / 1;
+    margin: 0 auto 16px;
     user-select: none;
     touch-action: none;
   }
 
   .search-cell {
-    width: clamp(24px, 8vw, 36px);
-    height: clamp(24px, 8vw, 36px);
     display: flex;
     align-items: center;
     justify-content: center;
+    min-width: 0;
+    min-height: 0;
     background: #fff;
     border: 1px solid #ddd;
     font-weight: bold;
-    font-size: clamp(0.7rem, 3vw, 0.95rem);
+    font-size: clamp(0.55rem, 2.6vw, 0.9rem);
     color: var(--text);
-    border-radius: 4px;
+    border-radius: 3px;
+    overflow: hidden;
   }
 
   .search-cell.selecting {
@@ -1213,8 +1216,8 @@
   // 5. Speed Word Search
   // =================================================================
   var searchState = null;
-  var SEARCH_SIZE = 12;
-  var SEARCH_TIME = 25;
+  var SEARCH_SIZE = 10;
+  var SEARCH_TIME = 20;
 
   function initSearch() {
     var built = buildSearchGrid();
@@ -1302,7 +1305,8 @@
   function renderSearchGrid() {
     var gridEl = byId("searchGrid");
     gridEl.innerHTML = "";
-    gridEl.style.gridTemplateColumns = "repeat(" + SEARCH_SIZE + ", auto)";
+    gridEl.style.gridTemplateColumns = "repeat(" + SEARCH_SIZE + ", 1fr)";
+    gridEl.style.gridTemplateRows = "repeat(" + SEARCH_SIZE + ", 1fr)";
 
     for (var r = 0; r < SEARCH_SIZE; r++) {
       for (var c = 0; c < SEARCH_SIZE; c++) {
