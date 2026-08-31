@@ -1033,6 +1033,10 @@
   // =================================================================
   var dropState = null;
 
+  // Eases kids in: word 1 falls 3x slower than normal, word 2 is 2x
+  // faster than word 1, and word 3 onward settles at the normal speed.
+  var DROP_SPEED_STAGES = [13500, 6750, 4500];
+
   function initDrop() {
     dropState = {
       queue: shuffle(WORDS),
@@ -1041,7 +1045,8 @@
       spelled: "",
       lives: 3,
       score: 0,
-      fallDuration: 13500, // 3x slower than the original 4500ms
+      wordNumber: 0,
+      fallDuration: DROP_SPEED_STAGES[0],
       timers: [],
       active: true
     };
@@ -1080,6 +1085,8 @@
     }
     dropState.word = dropState.queue[dropState.qIndex].word.toUpperCase();
     dropState.spelled = "";
+    dropState.fallDuration = DROP_SPEED_STAGES[Math.min(dropState.wordNumber, DROP_SPEED_STAGES.length - 1)];
+    dropState.wordNumber++;
     renderDropProgress();
     spawnDropStep();
   }
