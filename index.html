@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>3rd Grade Spelling Adventure</title>
+<style>
+  :root {
+    --deep-purple: #5A276B;
+    --electric-blue: #3AB8FF;
+    --bright-yellow: #FFEA00;
+    --vivid-orange: #FF6200;
+    --bg: #FFFFFF;
+    --text: #333333;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Comic Sans MS", "Trebuchet MS", Verdana, sans-serif;
+  }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .app-header {
+    background: var(--deep-purple);
+    color: #fff;
+    text-align: center;
+    padding: 18px 12px 14px;
+  }
+
+  .app-header h1 {
+    margin: 0 0 4px;
+    font-size: clamp(1.4rem, 5vw, 2.1rem);
+  }
+
+  .app-header p {
+    margin: 0;
+    font-size: clamp(0.85rem, 3vw, 1rem);
+    opacity: 0.9;
+  }
+
+  .mode-nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 12px 10px;
+    background: #f4f0f7;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 3px solid var(--deep-purple);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mode-btn {
+    flex: 0 0 auto;
+    background: var(--electric-blue);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    padding: 12px 18px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    min-height: 44px;
+    white-space: nowrap;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.15);
+  }
+
+  .mode-btn.active {
+    background: var(--vivid-orange);
+  }
+
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 18px 14px 50px;
+  }
+
+  .mode-section { display: none; }
+  .mode-section.active { display: block; }
+
+  .section-title {
+    color: var(--vivid-orange);
+    text-align: center;
+    font-size: clamp(1.2rem, 4.5vw, 1.6rem);
+    margin: 4px 0 16px;
+  }
+
+  .btn {
+    border: none;
+    border-radius: 12px;
+    padding: 14px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    min-height: 48px;
+  }
+
+  .btn-primary {
+    background: var(--vivid-orange);
+    color: #fff;
+  }
+  .btn-primary:active { filter: brightness(0.92); }
+
+  .btn-secondary {
+    background: var(--electric-blue);
+    color: #fff;
+  }
+
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+
+  .center-row {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* ---------- Flashcards ---------- */
+  .flash-progress {
+    text-align: center;
+    font-weight: bold;
+    color: var(--deep-purple);
+    margin-bottom: 10px;
+  }
+
+  .flip-card {
+    perspective: 1200px;
+    width: 100%;
+    max-width: 460px;
+    height: 260px;
+    margin: 0 auto 18px;
+  }
+
+  .flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    cursor: pointer;
+  }
+
+  .flip-card.flipped .flip-card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .flip-card-front, .flip-card-back {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-shadow: 0 6px 0 rgba(0,0,0,0.15);
+  }
+
+  .flip-card-front {
+    background: var(--electric-blue);
+    color: #fff;
+  }
+
+  .flip-card-front .word {
+    font-size: clamp(1.8rem, 8vw, 2.6rem);
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+
+  .flip-card-front .hint, .flip-card-back .hint {
+    margin-top: 14px;
+    font-size: 0.85rem;
+    opacity: 0.85;
+  }
+
+  .flip-card-back {
+    background: var(--deep-purple);
+    color: #fff;
+    transform: rotateY(180deg);
+  }
+
+  .flip-card-back .def-label {
+    color: var(--bright-yellow);
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+
+  .flip-card-back p {
+    margin: 4px 0 10px;
+    font-size: 1rem;
+  }
+
+  /* ---------- Matching ---------- */
+  .score-bar {
+    text-align: center;
+    font-weight: bold;
+    color: var(--deep-purple);
+    background: #f4f0f7;
+    border-radius: 12px;
+    padding: 10px;
+    margin-bottom: 14px;
+  }
+
+  .match-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .match-btn {
+    border-radius: 14px;
+    padding: 14px 8px;
+    min-height: 64px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: 3px solid transparent;
+  }
+
+  .match-word {
+    background: var(--electric-blue);
+    color: #fff;
+  }
+
+  .match-def {
+    background: #fff;
+    color: var(--deep-purple);
+    border-color: var(--deep-purple);
+    font-weight: normal;
+    font-size: 0.85rem;
+  }
+
+  .match-btn.selected {
+    border-color: var(--bright-yellow);
+    box-shadow: 0 0 0 3px var(--bright-yellow);
+  }
+
+  .match-btn.matched {
+    background: var(--bright-yellow);
+    color: var(--deep-purple);
+    border-color: var(--bright-yellow);
+  }
+
+  .match-btn.error {
+    background: var(--vivid-orange) !important;
+    color: #fff !important;
+  }
+
+  .match-btn:disabled { cursor: default; }
+
+  .win-banner {
+    text-align: center;
+    background: var(--bright-yellow);
+    color: var(--deep-purple);
+    border-radius: 14px;
+    padding: 14px;
+    font-weight: bold;
+    margin-bottom: 14px;
+    display: none;
+  }
+  .win-banner.show { display: block; }
+
+  /* ---------- Spelling Drop ---------- */
+  .drop-stats {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    color: var(--deep-purple);
+    margin-bottom: 8px;
+    padding: 0 4px;
+  }
+
+  .drop-area {
+    position: relative;
+    height: 300px;
+    background: linear-gradient(#efe6f4, #ffffff);
+    border: 3px solid var(--deep-purple);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+
+  .falling-letter {
+    position: absolute;
+    top: -15%;
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: var(--bright-yellow);
+    border: 3px solid var(--vivid-orange);
+    color: var(--deep-purple);
+    font-size: 1.3rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: top linear;
+  }
+
+  .falling-letter.falling {
+    top: 100%;
+  }
+
+  .falling-letter.wrong-flash {
+    background: var(--vivid-orange);
+    color: #fff;
+  }
+
+  .drop-progress {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+
+  .drop-slot {
+    width: 34px;
+    height: 40px;
+    border-bottom: 4px solid var(--deep-purple);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: var(--deep-purple);
+  }
+
+  .overlay-msg {
+    text-align: center;
+    background: #f4f0f7;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+
+  .overlay-msg.success { background: var(--bright-yellow); color: var(--deep-purple); }
+  .overlay-msg.danger { background: var(--vivid-orange); color: #fff; }
+
+  /* ---------- Missing Letter Detective ---------- */
+  .blank-def {
+    text-align: center;
+    font-style: italic;
+    color: var(--deep-purple);
+    margin-bottom: 14px;
+  }
+
+  .blank-word-row {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .blank-box {
+    min-width: 32px;
+    height: 44px;
+    padding: 0 4px;
+    border-bottom: 4px solid var(--deep-purple);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--deep-purple);
+  }
+
+  .blank-box.empty {
+    background: #f4f0f7;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .blank-box.filled {
+    background: var(--bright-yellow);
+    border-radius: 8px 8px 0 0;
+  }
+
+  .tile-bank {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .letter-tile {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    background: var(--electric-blue);
+    color: #fff;
+    border: none;
+    font-size: 1.4rem;
+    font-weight: bold;
+  }
+
+  .letter-tile.error {
+    background: var(--vivid-orange);
+  }
+
+  /* ---------- Speed Word Search ---------- */
+  .search-target {
+    text-align: center;
+    background: #f4f0f7;
+    border-radius: 14px;
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+
+  .search-target .label {
+    color: var(--vivid-orange);
+    font-weight: bold;
+    font-size: 0.85rem;
+  }
+
+  .search-timer {
+    text-align: center;
+    font-weight: bold;
+    color: var(--vivid-orange);
+    margin-bottom: 10px;
+  }
+
+  .search-grid {
+    display: grid;
+    gap: 3px;
+    justify-content: center;
+    margin-bottom: 16px;
+    user-select: none;
+    touch-action: none;
+  }
+
+  .search-cell {
+    width: clamp(24px, 8vw, 36px);
+    height: clamp(24px, 8vw, 36px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border: 1px solid #ddd;
+    font-weight: bold;
+    font-size: clamp(0.7rem, 3vw, 0.95rem);
+    color: var(--text);
+    border-radius: 4px;
+  }
+
+  .search-cell.selecting {
+    background: var(--bright-yellow);
+  }
+
+  .search-cell.found {
+    background: var(--electric-blue);
+    color: #fff;
+  }
+
+  .search-cell.wrong {
+    background: var(--vivid-orange);
+    color: #fff;
+  }
+
+  footer {
+    text-align: center;
+    color: #888;
+    font-size: 0.8rem;
+    padding: 20px 10px 30px;
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <h1>3rd Grade Spelling Adventure</h1>
+  <p>September, Week 1 vocabulary practice</p>
+</header>
+
+<nav class="mode-nav" id="modeNav">
+  <button class="mode-btn active" data-mode="flashcards">Flashcards</button>
+  <button class="mode-btn" data-mode="matching">Matching</button>
+  <button class="mode-btn" data-mode="drop">Spelling Drop</button>
+  <button class="mode-btn" data-mode="blank">Missing Letter</button>
+  <button class="mode-btn" data-mode="search">Word Search</button>
+</nav>
+
+<main>
+
+  <!-- Flashcards -->
+  <section class="mode-section active" id="flashcards-section">
+    <h2 class="section-title">Flashcards</h2>
+    <div class="flash-progress" id="flashProgress">Card 1 of 10</div>
+    <div class="flip-card" id="flipCard">
+      <div class="flip-card-inner" id="flipCardInner">
+        <div class="flip-card-front">
+          <div class="word" id="flashWord">WORD</div>
+          <div class="hint">Tap the card to flip</div>
+        </div>
+        <div class="flip-card-back">
+          <div class="def-label">Definition</div>
+          <p id="flashDef">definition</p>
+          <div class="def-label">Sentence</div>
+          <p id="flashSentence">sentence</p>
+          <div class="hint">Tap to flip back</div>
+        </div>
+      </div>
+    </div>
+    <div class="center-row">
+      <button class="btn btn-primary" id="flashPrev">&#8592; Previous</button>
+      <button class="btn btn-primary" id="flashNext">Next &#8594;</button>
+    </div>
+  </section>
+
+  <!-- Matching -->
+  <section class="mode-section" id="matching-section">
+    <h2 class="section-title">Matching</h2>
+    <div class="score-bar" id="matchScoreBar">Matches: 0 / 6 &nbsp;|&nbsp; Score: 0</div>
+    <div class="win-banner" id="matchWinBanner">You matched them all! Great job!</div>
+    <div class="match-grid" id="matchGrid"></div>
+    <div class="center-row">
+      <button class="btn btn-primary" id="matchReset">New Round</button>
+    </div>
+  </section>
+
+  <!-- Spelling Drop -->
+  <section class="mode-section" id="drop-section">
+    <h2 class="section-title">Spelling Drop</h2>
+    <div class="drop-stats">
+      <span id="dropScore">Score: 0</span>
+      <span id="dropLives">Lives: 3</span>
+    </div>
+    <div class="drop-area" id="dropArea"></div>
+    <div class="drop-progress" id="dropProgress"></div>
+    <div class="overlay-msg" id="dropMessage" style="display:none;"></div>
+    <div class="center-row">
+      <button class="btn btn-primary" id="dropRestart">Restart Game</button>
+    </div>
+  </section>
+
+  <!-- Missing Letter Detective -->
+  <section class="mode-section" id="blank-section">
+    <h2 class="section-title">Missing Letter Detective</h2>
+    <div class="score-bar" id="blankScoreBar">Score: 0</div>
+    <div class="blank-def" id="blankSentence">Sentence with a blanked word appears here.</div>
+    <div class="blank-word-row" id="blankWordRow"></div>
+    <div class="tile-bank" id="blankBank"></div>
+    <div class="overlay-msg" id="blankMessage" style="display:none;"></div>
+    <div class="center-row">
+      <button class="btn btn-primary" id="blankSkip">Skip Word</button>
+    </div>
+  </section>
+
+  <!-- Speed Word Search -->
+  <section class="mode-section" id="search-section">
+    <h2 class="section-title">Speed Word Search</h2>
+    <div class="score-bar" id="searchScoreBar">Score: 0</div>
+    <div class="search-target" id="searchTarget">
+      <div class="label">FIND THE WORD THAT MEANS:</div>
+      <div id="searchDefText">definition</div>
+    </div>
+    <div class="search-timer" id="searchTimer">Time left: 20</div>
+    <div class="search-grid" id="searchGrid"></div>
+    <div class="overlay-msg" id="searchMessage" style="display:none;"></div>
+    <div class="center-row">
+      <button class="btn btn-primary" id="searchRestart">New Grid</button>
+    </div>
+  </section>
+
+</main>
+
+<footer>Practice makes perfect spellers.</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------------------------------------------------------------
+  // Data
+  // ---------------------------------------------------------------
+  var WORDS = [
+    { word: "accident", def: "An unexpected event that happens by chance, often causing harm.", sentence: "The car accident happened on a rainy afternoon." },
+    { word: "actual", def: "Existing in fact; real.", sentence: "Tell me what actually happened at recess." },
+    { word: "admiral", def: "A high ranking officer in the navy.", sentence: "The admiral commanded the entire fleet of ships." },
+    { word: "adventure", def: "An exciting or unusual experience.", sentence: "Our trip to the mountains was a great adventure." },
+    { word: "afraid", def: "Feeling fear or worry.", sentence: "She was afraid of the loud thunderstorm." },
+    { word: "airplane", def: "A vehicle that flies through the air using wings and engines.", sentence: "We watched the airplane take off from the runway." },
+    { word: "alphabet", def: "The set of letters used to write a language.", sentence: "There are twenty six letters in the English alphabet." },
+    { word: "always", def: "At all times; every single time.", sentence: "She always brushes her teeth before bed." },
+    { word: "amount", def: "A quantity of something.", sentence: "We need a large amount of paper for the project." },
+    { word: "ancient", def: "Very old; from a long time ago.", sentence: "The museum has ancient pottery from Egypt." }
+  ];
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function byId(id) { return document.getElementById(id); }
+
+  // ---------------------------------------------------------------
+  // Mode switching
+  // ---------------------------------------------------------------
+  var currentMode = "flashcards";
+  var cleanupFns = {};
+
+  function switchMode(mode) {
+    if (cleanupFns[currentMode]) cleanupFns[currentMode]();
+    currentMode = mode;
+
+    var sections = document.querySelectorAll(".mode-section");
+    for (var i = 0; i < sections.length; i++) sections[i].classList.remove("active");
+    byId(mode + "-section").classList.add("active");
+
+    var btns = document.querySelectorAll(".mode-btn");
+    for (var j = 0; j < btns.length; j++) {
+      btns[j].classList.toggle("active", btns[j].getAttribute("data-mode") === mode);
+    }
+
+    if (mode === "flashcards") initFlashcards();
+    if (mode === "matching") initMatching();
+    if (mode === "drop") initDrop();
+    if (mode === "blank") initBlank();
+    if (mode === "search") initSearch();
+  }
+
+  byId("modeNav").addEventListener("click", function (e) {
+    var btn = e.target.closest(".mode-btn");
+    if (!btn) return;
+    switchMode(btn.getAttribute("data-mode"));
+  });
+
+  // =================================================================
+  // 1. Flashcards
+  // =================================================================
+  var flashIndex = 0;
+
+  function initFlashcards() {
+    flashIndex = 0;
+    renderFlashcard();
+  }
+
+  function renderFlashcard() {
+    var item = WORDS[flashIndex];
+    byId("flipCard").classList.remove("flipped");
+    byId("flashWord").textContent = item.word.toUpperCase();
+    byId("flashDef").textContent = item.def;
+    byId("flashSentence").textContent = item.sentence;
+    byId("flashProgress").textContent = "Card " + (flashIndex + 1) + " of " + WORDS.length;
+  }
+
+  byId("flipCardInner").addEventListener("click", function () {
+    byId("flipCard").classList.toggle("flipped");
+  });
+
+  byId("flashNext").addEventListener("click", function () {
+    flashIndex = (flashIndex + 1) % WORDS.length;
+    renderFlashcard();
+  });
+
+  byId("flashPrev").addEventListener("click", function () {
+    flashIndex = (flashIndex - 1 + WORDS.length) % WORDS.length;
+    renderFlashcard();
+  });
+
+  // =================================================================
+  // 2. Matching
+  // =================================================================
+  var matchState = null;
+
+  function initMatching() {
+    var roundWords = shuffle(WORDS).slice(0, 6);
+    matchState = {
+      words: shuffle(roundWords),
+      defs: shuffle(roundWords),
+      selectedWordEl: null,
+      selectedWordItem: null,
+      matchedCount: 0,
+      total: roundWords.length,
+      score: 0,
+      locked: false
+    };
+    byId("matchWinBanner").classList.remove("show");
+    renderMatching();
+  }
+
+  function renderMatching() {
+    var grid = byId("matchGrid");
+    grid.innerHTML = "";
+
+    matchState.words.forEach(function (item) {
+      var b = document.createElement("button");
+      b.className = "match-btn match-word";
+      b.textContent = item.word;
+      b.dataset.word = item.word;
+      b.addEventListener("click", function () { onWordClick(item, b); });
+      grid.appendChild(b);
+    });
+
+    matchState.defs.forEach(function (item) {
+      var b = document.createElement("button");
+      b.className = "match-btn match-def";
+      b.textContent = item.def;
+      b.dataset.word = item.word;
+      b.addEventListener("click", function () { onDefClick(item, b); });
+      grid.appendChild(b);
+    });
+
+    updateMatchScoreBar();
+  }
+
+  function updateMatchScoreBar() {
+    byId("matchScoreBar").textContent =
+      "Matches: " + matchState.matchedCount + " / " + matchState.total +
+      "  |  Score: " + matchState.score;
+  }
+
+  function onWordClick(item, el) {
+    if (matchState.locked || el.classList.contains("matched")) return;
+    var prev = matchState.selectedWordEl;
+    if (prev) prev.classList.remove("selected");
+    matchState.selectedWordEl = el;
+    matchState.selectedWordItem = item;
+    el.classList.add("selected");
+  }
+
+  function onDefClick(item, el) {
+    if (matchState.locked || el.classList.contains("matched")) return;
+    if (!matchState.selectedWordItem) return;
+
+    var wordEl = matchState.selectedWordEl;
+    var wordItem = matchState.selectedWordItem;
+
+    if (wordItem.word === item.word) {
+      wordEl.classList.remove("selected");
+      wordEl.classList.add("matched");
+      el.classList.add("matched");
+      wordEl.disabled = true;
+      el.disabled = true;
+      matchState.matchedCount++;
+      matchState.score += 10;
+      matchState.selectedWordEl = null;
+      matchState.selectedWordItem = null;
+      updateMatchScoreBar();
+      if (matchState.matchedCount === matchState.total) {
+        byId("matchWinBanner").classList.add("show");
+      }
+    } else {
+      matchState.locked = true;
+      wordEl.classList.add("error");
+      el.classList.add("error");
+      matchState.score = Math.max(0, matchState.score - 2);
+      updateMatchScoreBar();
+      setTimeout(function () {
+        wordEl.classList.remove("error", "selected");
+        el.classList.remove("error");
+        matchState.selectedWordEl = null;
+        matchState.selectedWordItem = null;
+        matchState.locked = false;
+      }, 500);
+    }
+  }
+
+  byId("matchReset").addEventListener("click", initMatching);
+
+  // =================================================================
+  // 3. Spelling Drop (falling letters)
+  // =================================================================
+  var dropState = null;
+
+  function initDrop() {
+    dropState = {
+      queue: shuffle(WORDS),
+      qIndex: 0,
+      word: "",
+      spelled: "",
+      lives: 3,
+      score: 0,
+      fallDuration: 4500,
+      timers: [],
+      active: true
+    };
+    byId("dropMessage").style.display = "none";
+    updateDropStats();
+    loadDropWord();
+  }
+
+  function cleanupDrop() {
+    if (!dropState) return;
+    dropState.active = false;
+    dropState.timers.forEach(clearTimeout);
+    dropState.timers = [];
+    byId("dropArea").innerHTML = "";
+  }
+  cleanupFns.drop = cleanupDrop;
+
+  function addDropTimer(fn, ms) {
+    var id = setTimeout(function () {
+      if (!dropState || !dropState.active) return;
+      fn();
+    }, ms);
+    dropState.timers.push(id);
+    return id;
+  }
+
+  function updateDropStats() {
+    byId("dropScore").textContent = "Score: " + dropState.score;
+    byId("dropLives").textContent = "Lives: " + dropState.lives;
+  }
+
+  function loadDropWord() {
+    if (dropState.qIndex >= dropState.queue.length) {
+      dropState.queue = shuffle(WORDS);
+      dropState.qIndex = 0;
+    }
+    dropState.word = dropState.queue[dropState.qIndex].word.toUpperCase();
+    dropState.spelled = "";
+    renderDropProgress();
+    spawnDropStep();
+  }
+
+  function renderDropProgress() {
+    var row = byId("dropProgress");
+    row.innerHTML = "";
+    for (var i = 0; i < dropState.word.length; i++) {
+      var slot = document.createElement("div");
+      slot.className = "drop-slot";
+      slot.textContent = i < dropState.spelled.length ? dropState.word[i] : "";
+      row.appendChild(slot);
+    }
+  }
+
+  function spawnDropStep() {
+    var area = byId("dropArea");
+    area.innerHTML = "";
+    var targetLetter = dropState.word[dropState.spelled.length];
+    var letters = [{ ch: targetLetter, isTarget: true }];
+
+    var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    while (letters.length < 3) {
+      var decoy = alphabet[Math.floor(Math.random() * alphabet.length)];
+      if (decoy !== targetLetter) letters.push({ ch: decoy, isTarget: false });
+    }
+    letters = shuffle(letters);
+
+    var positions = shuffle([12, 40, 68]);
+    letters.forEach(function (letterInfo, idx) {
+      var tile = document.createElement("button");
+      tile.className = "falling-letter";
+      tile.textContent = letterInfo.ch;
+      tile.style.left = positions[idx] + "%";
+      tile.style.transitionDuration = dropState.fallDuration + "ms";
+      tile.addEventListener("click", function () {
+        onDropTileClick(letterInfo, tile, targetLetter);
+      });
+      area.appendChild(tile);
+    });
+
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        var tiles = area.querySelectorAll(".falling-letter");
+        for (var i = 0; i < tiles.length; i++) tiles[i].classList.add("falling");
+      });
+    });
+
+    addDropTimer(handleDropMiss, dropState.fallDuration);
+  }
+
+  function onDropTileClick(letterInfo, tileEl, targetLetter) {
+    if (!dropState.active) return;
+    if (letterInfo.isTarget) {
+      dropState.timers.forEach(clearTimeout);
+      dropState.timers = [];
+      byId("dropArea").innerHTML = "";
+      dropState.spelled += targetLetter;
+      dropState.score += 10;
+      updateDropStats();
+      renderDropProgress();
+      if (dropState.spelled.length === dropState.word.length) {
+        dropWordComplete();
+      } else {
+        addDropTimer(spawnDropStep, 500);
+      }
+    } else {
+      tileEl.classList.add("wrong-flash");
+      dropState.score = Math.max(0, dropState.score - 2);
+      updateDropStats();
+      setTimeout(function () { tileEl.classList.remove("wrong-flash"); }, 300);
+    }
+  }
+
+  function handleDropMiss() {
+    dropState.timers.forEach(clearTimeout);
+    dropState.timers = [];
+    byId("dropArea").innerHTML = "";
+    dropState.lives--;
+    updateDropStats();
+    if (dropState.lives <= 0) {
+      dropGameOver();
+    } else {
+      showDropMessage("Missed it! The letter was " + dropState.word[dropState.spelled.length] + ".", "danger");
+      addDropTimer(function () {
+        hideDropMessage();
+        spawnDropStep();
+      }, 1200);
+    }
+  }
+
+  function dropWordComplete() {
+    var item = WORDS.filter(function (w) { return w.word.toUpperCase() === dropState.word; })[0];
+    dropState.score += 20;
+    updateDropStats();
+    showDropMessage("Great spelling! " + dropState.word + " means: " + item.def, "success");
+    addDropTimer(function () {
+      hideDropMessage();
+      dropState.qIndex++;
+      loadDropWord();
+    }, 1800);
+  }
+
+  function dropGameOver() {
+    showDropMessage("Game over! Final score: " + dropState.score, "danger");
+  }
+
+  function showDropMessage(text, kind) {
+    var el = byId("dropMessage");
+    el.textContent = text;
+    el.className = "overlay-msg " + kind;
+    el.style.display = "block";
+  }
+  function hideDropMessage() {
+    byId("dropMessage").style.display = "none";
+  }
+
+  byId("dropRestart").addEventListener("click", initDrop);
+
+  // =================================================================
+  // 4. Missing Letter Detective
+  // =================================================================
+  var blankState = null;
+  var VOWELS = "aeiou";
+
+  function initBlank() {
+    blankState = {
+      queue: shuffle(WORDS),
+      qIndex: 0,
+      score: 0
+    };
+    byId("blankMessage").style.display = "none";
+    updateBlankScoreBar();
+    loadBlankWord();
+  }
+
+  function updateBlankScoreBar() {
+    byId("blankScoreBar").textContent = "Score: " + blankState.score;
+  }
+
+  function loadBlankWord() {
+    if (blankState.qIndex >= blankState.queue.length) {
+      blankState.queue = shuffle(WORDS);
+      blankState.qIndex = 0;
+    }
+    var item = blankState.queue[blankState.qIndex];
+    var word = item.word.toLowerCase();
+
+    var blankPositions = [];
+    for (var i = 0; i < word.length; i++) {
+      if (VOWELS.indexOf(word[i]) !== -1) blankPositions.push(i);
+    }
+    if (blankPositions.length === 0) blankPositions.push(0);
+
+    blankState.item = item;
+    blankState.word = word;
+    blankState.blankPositions = blankPositions;
+    blankState.filledIndex = 0;
+
+    var correctLetters = blankPositions.map(function (i) { return word[i]; });
+    var pool = VOWELS.split("").filter(function (v) { return correctLetters.indexOf(v) === -1; });
+    var distractors = shuffle(pool).slice(0, Math.min(2, pool.length));
+    if (distractors.length < 2) {
+      var consonants = "bcdfgjklmnpqrstvwxyz".split("");
+      distractors = distractors.concat(shuffle(consonants).slice(0, 2 - distractors.length));
+    }
+    blankState.bank = shuffle(correctLetters.concat(distractors));
+
+    byId("blankSentence").textContent = item.sentence + "  (" + item.def + ")";
+    renderBlankWord();
+    renderBlankBank();
+  }
+
+  function renderBlankWord() {
+    var row = byId("blankWordRow");
+    row.innerHTML = "";
+    for (var i = 0; i < blankState.word.length; i++) {
+      var box = document.createElement("div");
+      var isBlank = blankState.blankPositions.indexOf(i) !== -1;
+      var blankOrderIndex = blankState.blankPositions.indexOf(i);
+      var alreadyFilled = isBlank && blankOrderIndex < blankState.filledIndex;
+      if (!isBlank) {
+        box.className = "blank-box filled";
+        box.textContent = blankState.word[i].toUpperCase();
+      } else if (alreadyFilled) {
+        box.className = "blank-box filled";
+        box.textContent = blankState.word[i].toUpperCase();
+      } else {
+        box.className = "blank-box empty";
+        box.textContent = "_";
+      }
+      row.appendChild(box);
+    }
+  }
+
+  function renderBlankBank() {
+    var bank = byId("blankBank");
+    bank.innerHTML = "";
+    blankState.bank.forEach(function (letter, idx) {
+      var tile = document.createElement("button");
+      tile.className = "letter-tile";
+      tile.textContent = letter.toUpperCase();
+      tile.addEventListener("click", function () { onBlankTileClick(letter, tile, idx); });
+      bank.appendChild(tile);
+    });
+  }
+
+  function onBlankTileClick(letter, tileEl) {
+    var neededIndex = blankState.blankPositions[blankState.filledIndex];
+    var neededLetter = blankState.word[neededIndex];
+
+    if (letter === neededLetter) {
+      blankState.filledIndex++;
+      blankState.score += 10;
+      updateBlankScoreBar();
+      var pos = blankState.bank.indexOf(letter);
+      blankState.bank.splice(pos, 1);
+      renderBlankWord();
+      renderBlankBank();
+      if (blankState.filledIndex === blankState.blankPositions.length) {
+        blankWordSolved();
+      }
+    } else {
+      tileEl.classList.add("error");
+      blankState.score = Math.max(0, blankState.score - 2);
+      updateBlankScoreBar();
+      setTimeout(function () { tileEl.classList.remove("error"); }, 300);
+    }
+  }
+
+  function blankWordSolved() {
+    blankState.score += 10;
+    updateBlankScoreBar();
+    var el = byId("blankMessage");
+    el.textContent = "You solved it! " + blankState.word.toUpperCase() + " - " + blankState.item.def;
+    el.className = "overlay-msg success";
+    el.style.display = "block";
+    setTimeout(function () {
+      el.style.display = "none";
+      blankState.qIndex++;
+      loadBlankWord();
+    }, 1800);
+  }
+
+  byId("blankSkip").addEventListener("click", function () {
+    blankState.qIndex++;
+    loadBlankWord();
+  });
+
+  // =================================================================
+  // 5. Speed Word Search
+  // =================================================================
+  var searchState = null;
+  var SEARCH_SIZE = 10;
+  var SEARCH_TIME = 20;
+
+  function initSearch() {
+    var built = buildSearchGrid();
+    searchState = {
+      grid: built.grid,
+      placements: built.placements,
+      queue: shuffle(built.placements),
+      qIndex: 0,
+      score: 0,
+      timeLeft: SEARCH_TIME,
+      timerId: null,
+      selecting: false,
+      anchor: null,
+      pathCells: [],
+      current: null
+    };
+    byId("searchMessage").style.display = "none";
+    updateSearchScoreBar();
+    renderSearchGrid();
+    startSearchRound();
+  }
+
+  function cleanupSearch() {
+    if (!searchState) return;
+    if (searchState.timerId) clearInterval(searchState.timerId);
+    document.removeEventListener("pointermove", onSearchPointerMove);
+    document.removeEventListener("pointerup", onSearchPointerUp);
+  }
+  cleanupFns.search = cleanupSearch;
+
+  function updateSearchScoreBar() {
+    byId("searchScoreBar").textContent = "Score: " + searchState.score;
+  }
+
+  function buildSearchGrid() {
+    var size = SEARCH_SIZE;
+    var grid = [];
+    for (var r = 0; r < size; r++) {
+      grid.push(new Array(size).fill(null));
+    }
+
+    var candidates = shuffle(WORDS).filter(function (w) { return w.word.length <= size; }).slice(0, 6);
+    var directions = [{ dr: 0, dc: 1 }, { dr: 1, dc: 0 }];
+    var placements = [];
+
+    candidates.forEach(function (item) {
+      var word = item.word.toUpperCase();
+      var placed = false;
+      for (var attempt = 0; attempt < 60 && !placed; attempt++) {
+        var dir = directions[Math.floor(Math.random() * directions.length)];
+        var maxR = dir.dr === 1 ? size - word.length : size - 1;
+        var maxC = dir.dc === 1 ? size - word.length : size - 1;
+        if (maxR < 0 || maxC < 0) continue;
+        var startR = Math.floor(Math.random() * (maxR + 1));
+        var startC = Math.floor(Math.random() * (maxC + 1));
+
+        var cells = [];
+        var ok = true;
+        for (var i = 0; i < word.length; i++) {
+          var r = startR + dir.dr * i;
+          var c = startC + dir.dc * i;
+          var existing = grid[r][c];
+          if (existing !== null && existing !== word[i]) { ok = false; break; }
+          cells.push({ r: r, c: c });
+        }
+        if (!ok) continue;
+
+        cells.forEach(function (cell, i) { grid[cell.r][cell.c] = word[i]; });
+        placements.push({ item: item, word: word, cells: cells });
+        placed = true;
+      }
+    });
+
+    var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for (var rr = 0; rr < size; rr++) {
+      for (var cc = 0; cc < size; cc++) {
+        if (grid[rr][cc] === null) {
+          grid[rr][cc] = alphabet[Math.floor(Math.random() * alphabet.length)];
+        }
+      }
+    }
+
+    return { grid: grid, placements: placements };
+  }
+
+  function renderSearchGrid() {
+    var gridEl = byId("searchGrid");
+    gridEl.innerHTML = "";
+    gridEl.style.gridTemplateColumns = "repeat(" + SEARCH_SIZE + ", auto)";
+
+    for (var r = 0; r < SEARCH_SIZE; r++) {
+      for (var c = 0; c < SEARCH_SIZE; c++) {
+        var cell = document.createElement("div");
+        cell.className = "search-cell";
+        cell.textContent = searchState.grid[r][c];
+        cell.dataset.r = r;
+        cell.dataset.c = c;
+        cell.addEventListener("pointerdown", onSearchPointerDown);
+        gridEl.appendChild(cell);
+      }
+    }
+
+    document.addEventListener("pointermove", onSearchPointerMove);
+    document.addEventListener("pointerup", onSearchPointerUp);
+  }
+
+  function startSearchRound() {
+    if (searchState.qIndex >= searchState.queue.length) {
+      searchGameOver();
+      return;
+    }
+    searchState.current = searchState.queue[searchState.qIndex];
+    byId("searchDefText").textContent = searchState.current.item.def;
+    searchState.timeLeft = SEARCH_TIME;
+    updateSearchTimer();
+    if (searchState.timerId) clearInterval(searchState.timerId);
+    searchState.timerId = setInterval(function () {
+      searchState.timeLeft--;
+      updateSearchTimer();
+      if (searchState.timeLeft <= 0) {
+        clearInterval(searchState.timerId);
+        searchTimeUp();
+      }
+    }, 1000);
+  }
+
+  function updateSearchTimer() {
+    byId("searchTimer").textContent = "Time left: " + searchState.timeLeft;
+  }
+
+  function searchTimeUp() {
+    var el = byId("searchMessage");
+    el.textContent = "Time's up! It was " + searchState.current.word + ".";
+    el.className = "overlay-msg danger";
+    el.style.display = "block";
+    setTimeout(function () {
+      el.style.display = "none";
+      searchState.qIndex++;
+      startSearchRound();
+    }, 1500);
+  }
+
+  function searchGameOver() {
+    byId("searchTimer").textContent = "";
+    byId("searchDefText").textContent = "All done!";
+    var el = byId("searchMessage");
+    el.textContent = "Word Search complete! Final score: " + searchState.score;
+    el.className = "overlay-msg success";
+    el.style.display = "block";
+  }
+
+  function cellKey(r, c) { return r + "," + c; }
+
+  function getCellFromPoint(x, y) {
+    var el = document.elementFromPoint(x, y);
+    if (!el || !el.classList.contains("search-cell")) return null;
+    return el;
+  }
+
+  function onSearchPointerDown(e) {
+    if (!searchState.current) return;
+    searchState.selecting = true;
+    var r = parseInt(e.currentTarget.dataset.r, 10);
+    var c = parseInt(e.currentTarget.dataset.c, 10);
+    searchState.anchor = { r: r, c: c };
+    setSearchPath([{ r: r, c: c }]);
+  }
+
+  function onSearchPointerMove(e) {
+    if (!searchState || !searchState.selecting) return;
+    var cellEl = getCellFromPoint(e.clientX, e.clientY);
+    if (!cellEl) return;
+    var r = parseInt(cellEl.dataset.r, 10);
+    var c = parseInt(cellEl.dataset.c, 10);
+    var anchor = searchState.anchor;
+    var path = [];
+
+    if (r === anchor.r) {
+      var lo = Math.min(anchor.c, c), hi = Math.max(anchor.c, c);
+      for (var cc = lo; cc <= hi; cc++) path.push({ r: r, c: cc });
+    } else if (c === anchor.c) {
+      var lo2 = Math.min(anchor.r, r), hi2 = Math.max(anchor.r, r);
+      for (var rr = lo2; rr <= hi2; rr++) path.push({ r: rr, c: c });
+    } else {
+      return;
+    }
+    setSearchPath(path);
+  }
+
+  function onSearchPointerUp() {
+    if (!searchState || !searchState.selecting) return;
+    searchState.selecting = false;
+    var path = searchState.pathCells;
+    var target = searchState.current;
+
+    var matches = path.length === target.cells.length &&
+      path.every(function (cell) {
+        return target.cells.some(function (tc) { return tc.r === cell.r && tc.c === cell.c; });
+      });
+
+    if (matches) {
+      markCells(path, "found");
+      clearSearchHighlight("selecting");
+      searchState.score += 15;
+      updateSearchScoreBar();
+      clearInterval(searchState.timerId);
+      searchState.qIndex++;
+      setTimeout(startSearchRound, 900);
+    } else {
+      markCells(path, "wrong");
+      setTimeout(function () {
+        clearSearchHighlight("wrong");
+        clearSearchHighlight("selecting");
+      }, 350);
+    }
+  }
+
+  function setSearchPath(path) {
+    clearSearchHighlight("selecting");
+    searchState.pathCells = path;
+    markCells(path, "selecting");
+  }
+
+  function markCells(path, cls) {
+    path.forEach(function (cell) {
+      var el = document.querySelector('.search-cell[data-r="' + cell.r + '"][data-c="' + cell.c + '"]');
+      if (el) el.classList.add(cls);
+    });
+  }
+
+  function clearSearchHighlight(cls) {
+    var els = document.querySelectorAll(".search-cell." + cls);
+    for (var i = 0; i < els.length; i++) els[i].classList.remove(cls);
+  }
+
+  byId("searchRestart").addEventListener("click", initSearch);
+
+  // ---------------------------------------------------------------
+  // Boot
+  // ---------------------------------------------------------------
+  initFlashcards();
+})();
+</script>
+
+</body>
+</html>
