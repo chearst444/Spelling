@@ -1419,13 +1419,9 @@
         cell.textContent = searchState.grid[r][c];
         cell.dataset.r = r;
         cell.dataset.c = c;
-        cell.addEventListener("pointerdown", onSearchPointerDown);
         gridEl.appendChild(cell);
       }
     }
-
-    document.addEventListener("pointermove", onSearchPointerMove);
-    document.addEventListener("pointerup", onSearchPointerUp);
   }
 
   function startSearchRound() {
@@ -1434,6 +1430,9 @@
       return;
     }
     searchState.current = searchState.queue[searchState.qIndex];
+    searchState.selecting = false;
+    searchState.pathCells = [];
+    clearSearchHighlight("selecting");
     byId("searchDefText").textContent = searchState.current.item.def;
     searchState.timeLeft = SEARCH_TIME;
     updateSearchTimer();
@@ -1453,6 +1452,12 @@
   }
 
   function searchTimeUp() {
+    // Cancel any drag in progress so a pointerup that lands after this
+    // point can't resolve against next round's (different) word.
+    searchState.selecting = false;
+    searchState.pathCells = [];
+    clearSearchHighlight("selecting");
+
     var el = byId("searchMessage");
     el.textContent = "Time's up! It was " + searchState.current.word + ".";
     el.className = "overlay-msg danger";
@@ -1473,29 +1478,35 @@
     el.style.display = "block";
   }
 
-  function cellKey(r, c) { return r + "," + c; }
-
-  function getCellFromPoint(x, y) {
-    var el = document.elementFromPoint(x, y);
-    if (!el || !el.classList.contains("search-cell")) return null;
-    return el;
+  // Maps a pointer's page coordinates to a grid row/col using the grid's
+  // own geometry instead of elementFromPoint, so the small gaps between
+  // cells never create "dead zones" that swallow a touch or drag step.
+  function getCellFromCoords(x, y) {
+    var gridEl = byId("searchGrid");
+    var rect = gridEl.getBoundingClientRect();
+    if (x < rect.left || x >= rect.right || y < rect.top || y >= rect.bottom) return null;
+    var cellW = rect.width / SEARCH_SIZE;
+    var cellH = rect.height / SEARCH_SIZE;
+    var c = Math.floor((x - rect.left) / cellW);
+    var r = Math.floor((y - rect.top) / cellH);
+    if (r < 0 || r >= SEARCH_SIZE || c < 0 || c >= SEARCH_SIZE) return null;
+    return { r: r, c: c };
   }
 
   function onSearchPointerDown(e) {
-    if (!searchState.current) return;
+    if (!searchState || !searchState.current) return;
+    var coords = getCellFromCoords(e.clientX, e.clientY);
+    if (!coords) return;
     searchState.selecting = true;
-    var r = parseInt(e.currentTarget.dataset.r, 10);
-    var c = parseInt(e.currentTarget.dataset.c, 10);
-    searchState.anchor = { r: r, c: c };
-    setSearchPath([{ r: r, c: c }]);
+    searchState.anchor = coords;
+    setSearchPath([coords]);
   }
 
   function onSearchPointerMove(e) {
     if (!searchState || !searchState.selecting) return;
-    var cellEl = getCellFromPoint(e.clientX, e.clientY);
-    if (!cellEl) return;
-    var r = parseInt(cellEl.dataset.r, 10);
-    var c = parseInt(cellEl.dataset.c, 10);
+    var coords = getCellFromCoords(e.clientX, e.clientY);
+    if (!coords) return;
+    var r = coords.r, c = coords.c;
     var anchor = searchState.anchor;
     var path = [];
 
@@ -1559,6 +1570,14 @@
   }
 
   byId("searchRestart").addEventListener("click", initSearch);
+
+  // Registered once (not on every grid render): the grid element itself
+  // persists across "New Grid" clicks, and stable function references
+  // mean repeat addEventListener calls on document would be no-ops anyway,
+  // but wiring it up once here keeps that assumption explicit and cheap.
+  byId("searchGrid").addEventListener("pointerdown", onSearchPointerDown);
+  document.addEventListener("pointermove", onSearchPointerMove);
+  document.addEventListener("pointerup", onSearchPointerUp);
 
   // ---------------------------------------------------------------
   // Boot
