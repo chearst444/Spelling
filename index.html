@@ -824,6 +824,16 @@
 
   byId("matchReset").addEventListener("click", initMatching);
 
+  // Shape/glow color pairs, all drawn from the orange-yellow half of the
+  // palette (bright yellow and vivid orange, plus lighter/darker tints of
+  // each) so every star reads as "on brand" while still varying a bit.
+  var STAR_COLOR_PAIRS = [
+    { shape: "#FFEA00", glow: "#FFB300" }, // bright yellow star, amber glow
+    { shape: "#FF6200", glow: "#FFCF33" }, // vivid orange star, lighter yellow glow
+    { shape: "#FFD400", glow: "#FF6200" }, // deeper yellow star, orange glow
+    { shape: "#FF8A3D", glow: "#FFEA00" }  // lighter orange star, bright yellow glow
+  ];
+
   function spawnCelebrationStars() {
     var banner = byId("matchWinBanner");
     var old = banner.querySelectorAll(".celebration-star");
@@ -839,10 +849,13 @@
       star.style.left = (-10 + Math.random() * 115) + "%";
       star.style.top = (-45 + Math.random() * 150) + "%";
       star.style.animationDelay = (Math.random() * 0.6) + "s";
+      var colors = STAR_COLOR_PAIRS[Math.floor(Math.random() * STAR_COLOR_PAIRS.length)];
       var glow = document.createElement("div");
       glow.className = "glow";
+      glow.style.backgroundColor = colors.glow;
       var shape = document.createElement("div");
       shape.className = "shape";
+      shape.style.backgroundColor = colors.shape;
       star.appendChild(glow);
       star.appendChild(shape);
       banner.appendChild(star);
