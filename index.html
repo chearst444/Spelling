@@ -621,7 +621,7 @@
       <div class="label">FIND THE WORD THAT MEANS:</div>
       <div id="searchDefText">definition</div>
     </div>
-    <div class="search-timer" id="searchTimer">Time left: 20</div>
+    <div class="search-timer" id="searchTimer">Time left: 1:20</div>
     <div class="search-grid" id="searchGrid"></div>
     <div class="overlay-msg" id="searchMessage" style="display:none;"></div>
     <div class="center-row">
@@ -1336,7 +1336,7 @@
   // =================================================================
   var searchState = null;
   var SEARCH_SIZE = 10;
-  var SEARCH_TIME = 20;
+  var SEARCH_TIME = 80; // 1:20 per word
 
   function initSearch() {
     var built = buildSearchGrid();
@@ -1480,7 +1480,9 @@
   }
 
   function updateSearchTimer() {
-    byId("searchTimer").textContent = "Time left: " + searchState.timeLeft;
+    var m = Math.floor(searchState.timeLeft / 60);
+    var s = searchState.timeLeft % 60;
+    byId("searchTimer").textContent = "Time left: " + m + ":" + (s < 10 ? "0" : "") + s;
   }
 
   function searchTimeUp() {
