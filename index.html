@@ -266,6 +266,8 @@
   .match-btn:disabled { cursor: default; }
 
   .win-banner {
+    position: relative;
+    overflow: visible;
     text-align: center;
     background: var(--bright-yellow);
     color: var(--deep-purple);
@@ -276,6 +278,47 @@
     display: none;
   }
   .win-banner.show { display: block; }
+
+  /* Celebration stars, pulled from the Puzzlers sprite sheet's
+     particleCartoonStar (solid star) and particleStar (soft glow) frames. */
+  .celebration-star {
+    position: absolute;
+    pointer-events: none;
+    z-index: 5;
+    animation: starTwinkle 0.5s ease-in-out infinite;
+  }
+
+  .celebration-star .glow,
+  .celebration-star .shape {
+    position: absolute;
+    inset: 0;
+    background-color: var(--bright-yellow);
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    mask-mode: alpha;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+    image-rendering: pixelated;
+  }
+
+  .celebration-star .glow {
+    inset: -65%;
+    opacity: 0.8;
+    mask-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAABRklEQVR4nN2TQUoDQRREq8RhGrphSEiEbCSY3kTiCfQmLnWZK3gTty4FD+ERGt1kcBkwQQl0wwwh+W4mYEIyaTRurG0Xxfu/fgP/Qs65hnOuEeM9ijFZa5u/Q9rQbDa7KoqiF+M9jjFprVsAWgDyfd6okUm2SbZjKFn3WBRFL0mSawBnJLWIBO/9fZZlzz8iTJJkSPICQFdE2gC6xpjbusbXCJ1zDWttsyzLjjGmD+ASQJfkiYhokkFE3gE8eO9fASBN0/FoNPoYDAafa4Tfw6oSOiQ1AIiIXi6XpyKiK/u5MaavtW6VZdmx1jZX1Dt3WO3vbhvhfD6/UUptbXznDpVSuYg8kZxUY76txt0VVku4QToEAO/9Y13DQMRhK6XyxWLxAgD7wqICAUBEJiGEaYw36qeEEKZpmo4PFri6tYMFxob9ib4AoG2UmI+Sq7MAAAAASUVORK5CYII=");
+    -webkit-mask-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAABRklEQVR4nN2TQUoDQRREq8RhGrphSEiEbCSY3kTiCfQmLnWZK3gTty4FD+ERGt1kcBkwQQl0wwwh+W4mYEIyaTRurG0Xxfu/fgP/Qs65hnOuEeM9ijFZa5u/Q9rQbDa7KoqiF+M9jjFprVsAWgDyfd6okUm2SbZjKFn3WBRFL0mSawBnJLWIBO/9fZZlzz8iTJJkSPICQFdE2gC6xpjbusbXCJ1zDWttsyzLjjGmD+ASQJfkiYhokkFE3gE8eO9fASBN0/FoNPoYDAafa4Tfw6oSOiQ1AIiIXi6XpyKiK/u5MaavtW6VZdmx1jZX1Dt3WO3vbhvhfD6/UUptbXznDpVSuYg8kZxUY76txt0VVku4QToEAO/9Y13DQMRhK6XyxWLxAgD7wqICAUBEJiGEaYw36qeEEKZpmo4PFri6tYMFxob9ib4AoG2UmI+Sq7MAAAAASUVORK5CYII=");
+  }
+
+  .celebration-star .shape {
+    mask-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAArklEQVR4nHWPsQ6DMAxEnShMDFGr/gFzJT4AVKlDZz6anQWJKQNVxy6JhOLBTrq0NIT2Jvv8dNYBZELEChGr3Fe5URTF9T2a/LYRMw/MPOwSrbXNZynL8iSlrAEAiKhbluW5kkTUee/jP3nvIxF1AABgrW2Yec4hZp7Tj2vbHEzbyx9tvwWUOu9AIcQthHB3zrXOuRYRQQhx2YDjOB5ijI9pmmqtda+17o0xxzT9BVE8jxHWZSJVAAAAAElFTkSuQmCC");
+    -webkit-mask-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAArklEQVR4nHWPsQ6DMAxEnShMDFGr/gFzJT4AVKlDZz6anQWJKQNVxy6JhOLBTrq0NIT2Jvv8dNYBZELEChGr3Fe5URTF9T2a/LYRMw/MPOwSrbXNZynL8iSlrAEAiKhbluW5kkTUee/jP3nvIxF1AABgrW2Yec4hZp7Tj2vbHEzbyx9tvwWUOu9AIcQthHB3zrXOuRYRQQhx2YDjOB5ijI9pmmqtda+17o0xxzT9BVE8jxHWZSJVAAAAAElFTkSuQmCC");
+  }
+
+  @keyframes starTwinkle {
+    0%, 100% { opacity: 0.2; transform: scale(0.6) rotate(0deg); }
+    50% { opacity: 1; transform: scale(1.25) rotate(20deg); }
+  }
 
   /* ---------- Spelling Drop ---------- */
   .drop-stats {
@@ -761,6 +804,7 @@
       updateMatchScoreBar();
       if (matchState.matchedCount === matchState.total) {
         byId("matchWinBanner").classList.add("show");
+        spawnCelebrationStars();
       }
     } else {
       matchState.locked = true;
@@ -779,6 +823,36 @@
   }
 
   byId("matchReset").addEventListener("click", initMatching);
+
+  function spawnCelebrationStars() {
+    var banner = byId("matchWinBanner");
+    var old = banner.querySelectorAll(".celebration-star");
+    for (var k = 0; k < old.length; k++) old[k].remove();
+
+    var count = 16;
+    for (var i = 0; i < count; i++) {
+      var star = document.createElement("div");
+      star.className = "celebration-star";
+      var size = 16 + Math.random() * 20;
+      star.style.width = size + "px";
+      star.style.height = size + "px";
+      star.style.left = (-10 + Math.random() * 115) + "%";
+      star.style.top = (-45 + Math.random() * 150) + "%";
+      star.style.animationDelay = (Math.random() * 0.6) + "s";
+      var glow = document.createElement("div");
+      glow.className = "glow";
+      var shape = document.createElement("div");
+      shape.className = "shape";
+      star.appendChild(glow);
+      star.appendChild(shape);
+      banner.appendChild(star);
+    }
+
+    setTimeout(function () {
+      var stars = banner.querySelectorAll(".celebration-star");
+      for (var j = 0; j < stars.length; j++) stars[j].remove();
+    }, 3000);
+  }
 
   // =================================================================
   // 3. Spelling Drop (falling letters)
